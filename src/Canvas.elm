@@ -1,9 +1,11 @@
 module Canvas exposing
     ( toHtml, toHtmlWith
+    , cmdsToHtml
     , Renderable, Point
     , shapes, text, texture
     , Shape
     , rect, circle, arc, path
+    , drawImageData
     , PathSegment, arcTo, bezierCurveTo, lineTo, moveTo, quadraticCurveTo
     )
 
@@ -125,6 +127,17 @@ toHtmlWith options attrs entities =
             :: List.map renderTextureSource options.textures
         )
 
+cmdsToHtml :
+  { width : Int
+  , height : Int
+  }
+  -> List (Attribute msg)
+  -> Commands
+  -> Html msg
+cmdsToHtml options attrs cmds =
+  Keyed.node "elm-canvas"
+      (commands cmds :: height options.height :: width options.width :: attrs)
+      [("__canvas", cnvs )]
 
 cnvs =
     canvas [] []
@@ -662,3 +675,6 @@ decodeTextureImageInfo =
                     (D.at [ "target", "width" ] D.float)
                     (D.at [ "target", "height" ] D.float)
             )
+
+drawImageData = CE.drawImageData
+

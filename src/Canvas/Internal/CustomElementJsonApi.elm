@@ -9,6 +9,7 @@ module Canvas.Internal.CustomElementJsonApi exposing
     , globalAlpha, globalCompositeOperation, save, restore
     , rotate, scale, translate, transform, setTransform
     , drawImage
+    , drawImageData
     , Command, commands
     )
 
@@ -866,6 +867,27 @@ drawImage : Float -> Float -> Float -> Float -> Float -> Float -> Float -> Float
 drawImage sx sy sw sh dx dy dw dh imageObj =
     fn "drawImage" [ imageObj, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh ]
 
+
+
+
+{- | drawImageData (width, height) (x, y) pixelColors
+-}
+drawImageData : (Int, Int) -> (Int, Int) -> List Color -> Command
+drawImageData (width, height) (x, y) pixelColors =
+  let convertColor : Color -> List Int
+      convertColor color =
+        let rgba = Color.toRgba color
+        in
+            List.map round [ rgba.red * 255, rgba.green * 255, rgba.blue * 255, rgba.alpha * 255 ]
+  in
+      Encode.object
+        [ ( "type", string "drawImageData")
+        , ( "width", Encode.int width )
+        , ( "height", Encode.int height )
+        , ( "x", Encode.int x )
+        , ( "y", Encode.int y )
+        , ( "data", Encode.list int (List.concatMap convertColor pixelColors))
+        ]
 
 
 {- TODO: Should these functions be supported:

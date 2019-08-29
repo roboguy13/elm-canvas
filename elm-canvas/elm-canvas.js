@@ -77,6 +77,12 @@ if (window["customElements"]) {
           this.context[cmd.name](...cmd.args);
         } else if (cmd.type === "field") {
           this.context[cmd.name] = cmd.value;
+        } else if (cmd.type == "drawImageData") {
+          var theImageData = this.context.createImageData(cmd.width, cmd.height);
+          for (var i = 0; i < theImageData.data.length; i++) {
+            theImageData.data[i] = cmd.data[i];
+          }
+          this.context.putImageData(theImageData, cmd.x, cmd.y);
         }
       }
     }
